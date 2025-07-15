@@ -29,7 +29,7 @@ RUN sed -i 's/X-Gophish-Signature/X-Signature/g' webhook/webhook.go
 RUN sed -i 's/const ServerName = "gophish"/const ServerName = "IGNORE"/' config/config.go
 
 # Changing rid value
-RUN sed -i 's/const RecipientParameter = "rid"/const RecipientParameter = "keyname"/g' models/campaign.go
+RUN sed -i 's/const RecipientParameter = "rid"/const RecipientParameter = "id"/g' models/campaign.go
 
 # Copying in custom 404 handler
 COPY ./files/phish.go ./controllers/phish.go
@@ -63,6 +63,6 @@ RUN sed -i 's/127.0.0.1/0.0.0.0/g' config.json
 
 RUN touch config.json.tmp
 
-EXPOSE 3333 80
+EXPOSE 3333 80 443
 
 CMD ["./docker/run.sh"]

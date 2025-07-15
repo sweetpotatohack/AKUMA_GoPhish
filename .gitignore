@@ -1,0 +1,50 @@
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+
+# SSL Certificates (security)
+ssl/*.crt
+ssl/*.key
+ssl/*.pem
+
+# Environment variables
+.env
+.env.local
+
+# Backup files
+backups/
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+.docker/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local configuration
+config.local.json
+
+# Let's Encrypt
+.well-known/
