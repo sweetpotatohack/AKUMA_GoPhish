@@ -9,6 +9,8 @@ import (
 	"html/template"
 	"net"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"strings"
 	"time"
 
@@ -141,6 +143,9 @@ func (ps *PhishingServer) registerRoutes() {
 	router := mux.NewRouter()
 	fileServer := http.FileServer(unindexed.Dir("./static/endpoint/"))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fileServer))
+	// Прокси /upload → Flask (upload_server в Docker-сети); тот же TLS :443, без nginx для phish
+	uploadURL, _ := url.Parse("http://upload_server:8080")
+	router.PathPrefix("/upload").Handler(httputil.NewSingleHostReverseProxy(uploadURL))
 	router.HandleFunc("/track", ps.TrackHandler)
 	router.HandleFunc("/robots.txt", ps.RobotsHandler)
 	router.HandleFunc("/{path:.*}/track", ps.TrackHandler)

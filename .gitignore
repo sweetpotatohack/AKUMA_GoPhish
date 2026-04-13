@@ -46,5 +46,9 @@ Thumbs.db
 # Local configuration
 config.local.json
 
+# Uploaded files from landing / upload server
+uploads/
+!uploads/.gitkeep
+
 # Let's Encrypt
 .well-known/

@@ -1,0 +1,7 @@
+FROM python:3.11-alpine
+RUN pip install --no-cache-dir flask
+WORKDIR /app
+COPY upload_server.py .
+RUN mkdir -p /uploads
+EXPOSE 8080
+CMD ["python", "upload_server.py"]
