@@ -14,6 +14,8 @@
 - **Easy Management**: Simple scripts for start, stop, restart, and monitoring
 - **Production Ready**: Docker-based deployment with persistence
 - **Monitoring**: Built-in status monitoring and health checks
+- **File upload**: `/upload` on the phishing host is reverse-proxied to a small Flask service; files land in `./uploads` on the host (see `upload_server.py`, `Dockerfile.upload`)
+- **QR in email templates**: Patched template context exposes `{{.QRCode}}` (inline image) for VPN / re-auth style mails — apply patch from `files/gophish-patches/` when building the image
 
 ## 📋 What's Included
 
@@ -29,6 +31,8 @@
 - ✅ Modified recipient parameter (`rid` → `id`)
 - ✅ Custom 404 error pages
 - ✅ Enhanced evasion capabilities
+- ✅ Phishing server proxies `/upload` → internal upload service (multipart uploads)
+- ✅ Email templates can embed `{{.QRCode}}` after applying `files/gophish-patches/models/template_context.go`
 
 ## 🛠️ Prerequisites
 
@@ -43,7 +47,7 @@
 ### Option 1: Automated Installation
 ```bash
 # Download and run the deployment script
-wget https://raw.githubusercontent.com/sweetpotatohack/sneaky-gophish-automation/main/deploy_gophish.sh
+wget https://raw.githubusercontent.com/sweetpotatohack/sneaky-gophish-ssl-automation/main/deploy_gophish.sh
 chmod +x deploy_gophish.sh
 ./deploy_gophish.sh
 ```
@@ -51,8 +55,8 @@ chmod +x deploy_gophish.sh
 ### Option 2: Manual Installation
 ```bash
 # Clone the repository
-git clone https://github.com/sweetpotatohack/sneaky-gophish-automation.git
-cd sneaky-gophish-automation
+git clone https://github.com/sweetpotatohack/sneaky-gophish-ssl-automation.git
+cd sneaky-gophish-ssl-automation
 
 # Make scripts executable
 chmod +x *.sh
@@ -64,21 +68,22 @@ chmod +x *.sh
 ## 📁 Project Structure
 
 ```
-sneaky-gophish-automation/
+sneaky-gophish-ssl-automation/
 ├── deploy_gophish.sh      # Main deployment script
 ├── manage_gophish.sh      # System management script
 ├── get_password.sh        # Password retrieval script
 ├── status.sh             # System status script
-├── renew_ssl.sh          # SSL certificate renewal (auto-generated)
-├── docker-compose.yml    # Docker configuration
-├── Dockerfile           # Custom GoPhish image
-├── config.json          # GoPhish configuration
-├── ssl/                 # SSL certificates directory
-│   ├── admin.crt        # Admin panel certificate
-│   ├── admin.key        # Admin panel private key
-│   ├── phish.crt        # Phishing server certificate
-│   └── phish.key        # Phishing server private key
-└── files/               # Additional resources
+├── renew_ssl.sh          # SSL renewal helper (used by deploy / cron)
+├── docker-compose.yml    # GoPhish + upload_server
+├── Dockerfile            # Custom GoPhish image
+├── Dockerfile.upload     # Flask upload service image
+├── upload_server.py      # POST /upload handler → ./uploads
+├── config.json           # GoPhish configuration
+├── nginx-redirect.conf   # Optional nginx snippets / reference
+├── ssl/                  # SSL certificates directory (Let's Encrypt / copies)
+├── uploads/              # Received files (ignored by git except .gitkeep)
+├── files/                # Landing pages, emails, phish.go patch, gophish-patches/
+└── data/                 # Persistent DB mount (use .gitkeep; never commit *.db)
 ```
 
 ## 🔧 Configuration
@@ -186,8 +191,13 @@ After successful deployment:
 
 - **Admin Panel**: `https://your-admin-domain:3333`
 - **Phishing Server**: `https://your-phish-domain`
+- **Upload endpoint**: `https://your-phish-domain/upload` (multipart form) → files on host `./uploads`
 - **Default Username**: `admin`
 - **Password**: Retrieved via `./get_password.sh`
+
+### Email templates with QR
+
+Example HTML emails under `files/` (e.g. `mail_tech_reauth.html`, `india_mail.html`) use GoPhish-style placeholders including `{{.QRCode}}` after the template patch is applied in your Docker build.
 
 ## 🐳 Docker Management
 
@@ -198,6 +208,7 @@ docker-compose ps
 
 # View logs
 docker-compose logs -f sneaky_gophish
+docker-compose logs -f upload_server
 
 # Restart container
 docker-compose restart
@@ -409,11 +420,16 @@ This tool is intended for authorized security testing and educational purposes o
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/sweetpotatohack/sneaky-gophish-automation/issues)
-- **Wiki**: [Project Wiki](https://github.com/sweetpotatohack/sneaky-gophish-automation/wiki)
-- **Discussions**: [GitHub Discussions](https://github.com/sweetpotatohack/sneaky-gophish-automation/discussions)
+- **Issues**: [GitHub Issues](https://github.com/sweetpotatohack/sneaky-gophish-ssl-automation/issues)
+- **Wiki**: [Project Wiki](https://github.com/sweetpotatohack/sneaky-gophish-ssl-automation/wiki)
+- **Discussions**: [GitHub Discussions](https://github.com/sweetpotatohack/sneaky-gophish-ssl-automation/discussions)
 
 ## 📈 Changelog
+
+### v1.1.0
+- File upload path `/upload` via Flask sidecar and reverse proxy in patched phish server
+- QR code variable `{{.QRCode}}` for email templates (patch under `files/gophish-patches/`)
+- README URLs corrected to `sneaky-gophish-ssl-automation`
 
 ### v1.0.0
 - Initial release
